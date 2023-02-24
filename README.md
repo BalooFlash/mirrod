@@ -1,80 +1,157 @@
-# Checks
+<div align="center">
 
-An e-commerce site for Nike sneakers built with the new Next.js 13 Beta (and other packages like tRPC, Next-Auth, Prisma,...)
+![mirrord logo](./images/logo.svg)
 
-> **Warning**
-> Not a real e-commerce site. Built for experimenting and learning purposes.
+</div>
 
-## Demo
+[![Discord](https://img.shields.io/discord/933706914808889356?color=5865F2&label=Discord&logo=discord&logoColor=white)](https://discord.gg/J5YSrStDKD)
+![License](https://img.shields.io/badge/license-MIT-green)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/metalbear-co/mirrord)
+[![Twitter Follow](https://img.shields.io/twitter/follow/metalbearco?style=social)](https://twitter.com/metalbearco)
 
-![progress1](https://user-images.githubusercontent.com/73758525/212482738-8eb76e3b-2cf8-42f6-86ee-8b0c9b4b63eb.png)
+mirrord lets developers run local processes in the context of their cloud environment.
+It’s meant to provide the benefits of running your service on a cloud environment (e.g. staging) without actually
+going through the hassle of deploying it there, and without disrupting the environment by deploying untested code.
+It comes as a Visual Studio Code extension, an IntelliJ plugin and a CLI tool. You can read more about it [here](https://mirrord.dev/docs/overview/introduction/).
 
-![progress2](https://user-images.githubusercontent.com/73758525/212482779-0a1daf72-3758-4ef4-bf89-f3695034bd82.png)
+# Contents
 
-![progress3](https://user-images.githubusercontent.com/73758525/212482786-373d6b13-c0e9-40fe-beec-7b89b84c097a.png)
+- [Contents](#contents)
+  - [Getting Started](#getting-started)
+  - [VS Code Extension](#vs-code-extension)
+    - [Installation](#installation)
+    - [How To Use](#how-to-use)
+  - [IntelliJ Plugin](#intellij-plugin)
+    - [Installation](#installation-1)
+    - [How To Use](#how-to-use-1)
+  - [CLI Tool](#cli-tool)
+    - [Installation](#installation-2)
+    - [How To Use](#how-to-use-2)
+  - [How It Works](#how-it-works)
+  - [FAQ](#faq)
+  - [Contributing](#contributing)
+  - [Development](#development)
+  - [Help and Community](#help-and-community)
+  - [Code of Conduct](#code-of-conduct)
+  - [License](#license)
 
-![progress4](https://user-images.githubusercontent.com/73758525/212482792-ac440448-d848-47f1-a746-f260ea63ec1a.png)
+---
 
-## About
+## Getting Started
 
-- For testing and experimenting all the new features in Next.js 13 Beta (`/app` dir, server components and everything new)
-- Inspired by [Taxonomy](https://github.com/shadcn/taxonomy) built by [@shadcn](https://twitter.com/shadcn)
-- Haven't built an e-commerce site, so I'm challenging myself to build one!
-- Building this in public. You can follow the progress/updates on [@amirfkrlh](https://twitter.com/amirfkrlh)
+- [VS Code Extension](#vs-code-extension)
+- [IntelliJ Plugin](#intellij-plugin)
+- [CLI Tool](#cli-tool)
 
-## Tech-stacks
+> mirrord uses your machine's default kubeconfig for access to the Kubernetes API.
 
-- [Next.js 13 Beta](https://beta.nextjs.org/docs)
-- [TailwindCSS](https://tailwindcss.com/)
-- [Material-Tailwind](https://www.material-tailwind.com/)
-- [tRPC](https://trpc.io/)
-- [Next-Auth](https://next-auth.js.org/)
-- [Prisma](https://www.prisma.io/)
-- [PostgreSQL](https://www.postgresql.org/)
-- [Typescript](https://www.typescriptlang.org/)
+---
 
-## Deployments/Hosting
+## VS Code Extension
 
-- Next.js: [Vercel](https://vercel.com/)
-- Database: [Railway](https://railway.app/)
-- Image hosting: [AWS S3](https://aws.amazon.com/s3/)
+### Installation
 
-## Payment
+Get the extension [here](https://marketplace.visualstudio.com/items?itemName=MetalBear.mirrord).
 
-- [Stripe](https://stripe.com/)
+### How To Use
 
-## Cron Job
+- Click "Enable mirrord" on the status bar
+- Start debugging your project
+- Choose pod to impersonate
+- The debugged process will be plugged into the selected pod by mirrord
 
-- GitHub Action
+<p align="center">
+  <img src="./images/vscode.gif">
+</p>
 
-## Setting up locally
+---
 
-- Clone or fork this repository
-- To clone:
+## IntelliJ Plugin
 
-```bash
-git clone https://github.com/amirfakhrullah/ecommerce-next13beta.git
+### Installation
+
+Get the plugin [here](https://plugins.jetbrains.com/plugin/19772-mirrord).
+
+### How To Use
+
+- Click the mirrord icon in the Navigation Toolbar
+- Start debugging your project
+- Choose a namespace and pod to impersonate
+- The debugged process will be plugged into the selected pod by mirrord
+
+<p align="center">
+  <img src="./images/intellij.gif">
+</p>
+
+---
+
+## CLI Tool
+
+### Installation
+
+You can use either
+
+```sh
+brew install metalbear-co/mirrord/mirrord
 ```
 
-- Create and set up the `.env` file, refer to `.env.sample` for the required keys
-- Install the dependencies and generate prisma client (postinstall):
+or
 
-```bash
-npm i
+```sh
+curl -fsSL https://raw.githubusercontent.com/metalbear-co/mirrord/main/scripts/install.sh | bash
 ```
 
-- Push and synchronize the prisma schema to the database:
+- Windows isn't currently supported (you can use WSL)
 
-```bash
-npx prisma db push
+### How To Use
+
+```sh
+mirrord exec <process command> --target <target-path>
 ```
 
-- Run locally:
+e.g.
 
-```bash
-npm run dev
+```sh
+mirrord exec node app.js --target pod/my-pod
 ```
+
+---
+
+## How It Works
+
+When you select a pod to impersonate, mirrord launches a privileged pod on the same node as the pod you selected.
+The new pod is then used to connect your local process and the impersonated pod: it mirrors incoming traffic from the pod to your process,
+routes outgoing traffic from your process through the pod, and does the same for file reads, file writes, and environment variables.
+You can read more about it [here](https://mirrord.dev/docs/overview/introduction/).
+
+<p align="center">
+  <img src="./images/how_it_works.svg" alt="How It Works"/>
+</p>
+
+## FAQ
+
+Our FAQ is available [here](https://mirrord.dev/docs/overview/faq/).
+If you have a question that's not on there, feel free to ask in our [Discussions](https://github.com/metalbear-co/mirrord/discussions)
+or on [Discord](https://discord.gg/J5YSrStDKD).
+
+## Contributing
+
+Contributions are much welcome. Start by checking out [issues](https://github.com/metalbear-co/mirrord/issues).
+If you wish to work an issue, please comment so you can be assigned.
+
+## Development
+
+Read our development guide [here](https://mirrord.dev/docs/developer/testing/).
+
+## Help and Community
+
+Join our [Discord Server](https://discord.gg/J5YSrStDKD) for questions, support and fun.
+
+## Code of Conduct
+
+We take our community seriously and we are dedicated to providing a safe and welcoming environment for everyone.
+Please take a few minutes to review our [Code of Conduct](./CODE_OF_CONDUCT.md).
 
 ## License
 
-License under the [MIT License](./LICENSE)
+[MIT](./LICENSE)
